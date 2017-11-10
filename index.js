@@ -1,27 +1,7 @@
 'use strict';
 
-const args = require('yargs').argv;
 const request = require('request-promise');
-
-if (!args.uri) {
-    console.log('[ERROR] Missing the URL of Jenkins Web API');
-    process.exit(1);
-}
-
-if (!args.user) {
-    console.log('[ERROR] Missing the user');
-    process.exit(1);
-}
-
-if (!args.password) {
-    console.log('[ERROR] Missing the password');
-    process.exit(1);
-}
-
-if (!args.crumb) {
-    console.log('[ERROR] Missing Jenkins Crumb');
-    process.exit(1);
-}
+const args = require('./app/args.js').args;
 
 const options = {
     method: 'POST',
