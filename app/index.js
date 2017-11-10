@@ -26,9 +26,16 @@ request(options)
     })
     .catch(function (err) {
         console.log('[ERROR] Fail to trigger Build task');
+        showMsgOfServiceError(err);
         showStatusOf(err.response);
         process.exit(1);
     });
+
+function showMsgOfServiceError(error) {
+    if (!error) return;
+    if (!error.message) return;
+    console.log(error.message);
+}
 
 function showStatusOf(response) {
     if (!response) return;
