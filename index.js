@@ -1,21 +1,45 @@
+'use strict';
+
+const args = require('yargs').argv;
 const request = require('request-promise');
+
+if (!args.uri) {
+    console.log('[ERROR] Missing the URL of Jenkins Web API');
+    process.exit(1);
+}
+
+if (!args.user) {
+    console.log('[ERROR] Missing the user');
+    process.exit(1);
+}
+
+if (!args.password) {
+    console.log('[ERROR] Missing the password');
+    process.exit(1);
+}
+
+if (!args.crumb) {
+    console.log('[ERROR] Missing Jenkins Crumb');
+    process.exit(1);
+}
 
 const options = {
     method: 'POST',
-    uri: 'http://10.70.51.243:8080/job/DropAP_Android/build',
+    uri: args.uri,
     auth: {
-        user: 'gocd',
-        pass: '1706f187577b6cb1efb68b22c32938a9'
+        user: args.user,
+        pass: args.password
     },
     headers: {
-        'Jenkins-Crumb': '3f33aa35e77cbc14bd3f91ccd6de742b'
+        'Jenkins-Crumb': args.crumb
     },
     qs: {
-        token: 'TRIGGER_BY_GOCD'
+        token: !args.token ? 'TRIGGER_BY_GOCD' : args.token
     },
     resolveWithFullResponse: true,
     json: true
 };
+
 
 request(options)
     .then(function (response) {
