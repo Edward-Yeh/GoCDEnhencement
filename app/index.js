@@ -1,7 +1,7 @@
 'use strict';
 
 const request = require('request-promise');
-const args = require('./args').args;
+const args = require('./check-args').args;
 
 const options = {
     method: 'POST',
