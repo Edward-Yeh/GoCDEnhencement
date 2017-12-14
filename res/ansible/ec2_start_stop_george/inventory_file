@@ -1,5 +1,2 @@
-#[all:vars]
-
 [local]
-localhost
-
+localhost ansible_connection=local ansible_python_interpreter=python

@@ -3,8 +3,8 @@
   gather_facts: false
     
   vars:
-    V_REGION: "ap-northeast-1"
-    V_INST_IDS: "i-01ca63eda6202c671"
+      V_REGION: "us-west-1"
+      V_INST_IDS: "i-0b0cb236ffe0fbbc3"
 
   tasks:
 ##############################################################
@@ -16,6 +16,8 @@
         instance_ids: 
           - "{{V_INST_IDS}}"
       register: V_EC2
+      tags:
+        - status
 
     - name: display ec2 status
       debug:
@@ -24,6 +26,8 @@
           - "{{item}}"
           - "##################################################" 
       with_items: "{{V_EC2.instances}}"
+      tags:
+        - status
 
 ###############################################################
 ##stop instance
@@ -34,6 +38,8 @@
         region: "{{V_REGION}}"
         state: stopped
         wait: true
+      tags:
+        - stop  
 
     - name: get instance status
       ec2_instance_facts:
@@ -41,6 +47,8 @@
         instance_ids: 
           - "{{V_INST_IDS}}"
       register: V_EC2
+      tags:
+        - stop    
 
     - name: display ec2 status
       debug:
@@ -49,6 +57,8 @@
           - "{{item.state}}"
           - "##################################################" 
       with_items: "{{V_EC2.instances}}"
+      tags:
+        - stop    
 
 ###############################################################
 ##start instance
@@ -59,6 +69,8 @@
         region: "{{V_REGION}}"
         state: running
         wait: true
+      tags:
+        - start      
 
     - name: get instance status
       ec2_instance_facts:
@@ -66,6 +78,8 @@
         instance_ids: 
           - "{{V_INST_IDS}}"
       register: V_EC2
+      tags:
+        - start    
 
     - name: wait for ssh to come up
       wait_for:
@@ -75,6 +89,8 @@
         timeout: 120
         state: started
       with_items: "{{V_EC2.instances}}"
+      tags:
+        - start    
 
     - name: display ec2 status
       debug:
@@ -83,3 +99,5 @@
           - "{{item.state}}"
           - "##################################################" 
       with_items: "{{V_EC2.instances}}"
+      tags:
+        - start    
