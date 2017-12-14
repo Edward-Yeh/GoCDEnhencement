@@ -1,0 +1,42 @@
+- hosts: localhost
+  connection: local
+  gather_facts: false
+    
+  vars:
+      V_REGION: "us-west-1"
+      V_INST_IDS: "i-0b0cb236ffe0fbbc3"
+
+  tasks:
+###############################################################
+##start instance
+###############################################################
+    - name: start ec2
+      ec2:
+        instance_ids: "{{V_INST_IDS}}"
+        region: "{{V_REGION}}"
+        state: running
+        wait: true
+
+    - name: get instance status
+      ec2_instance_facts:
+        region: "{{V_REGION}}"
+        instance_ids: 
+          - "{{V_INST_IDS}}"
+      register: V_EC2
+
+    - name: wait for ssh to come up
+      wait_for:
+        host: "{{item.public_ip_address}}"
+        port: 22
+        delay: 30
+        timeout: 120
+        state: started
+      with_items: "{{V_EC2.instances}}"
+
+    - name: display ec2 status
+      debug:
+        msg:
+          - "##################################################"
+          - "{{item.state}}"
+          - "##################################################" 
+      with_items: "{{V_EC2.instances}}"

@@ -1,0 +1,26 @@
+- hosts: localhost
+  connection: local
+  gather_facts: false
+    
+  vars:
+      V_REGION: "us-west-1"
+      V_INST_IDS: "i-0b0cb236ffe0fbbc3"
+
+  tasks:
+##############################################################
+#get instance status
+##############################################################
+    - name: get instance status
+      ec2_instance_facts: 
+        region: "{{V_REGION}}"
+        instance_ids: 
+          - "{{V_INST_IDS}}"
+      register: V_EC2
+
+    - name: display ec2 status
+      debug:
+        msg:
+          - "##################################################"
+          - "{{item}}"
+          - "##################################################" 
+      with_items: "{{V_EC2.instances}}"
