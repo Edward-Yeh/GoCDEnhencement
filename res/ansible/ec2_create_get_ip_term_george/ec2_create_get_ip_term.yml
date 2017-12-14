@@ -1,0 +1,75 @@
+- hosts: localhost
+  connection: local
+  gather_facts: false
+    
+  vars:
+    V_KEY_NAME: "browan_Tokyo_test"
+    V_INSTANCE_TYPE: "t2.nano"
+    V_IMAGE_ID: "ami-8a4580ec"
+    V_INST_COUNT: 1
+    V_REGION: "ap-northeast-1"
+    V_AZ: "ap-northeast-1a"
+    V_VPC_ID: "vpc-5a6d943e"
+    V_SUBNET_ID: "subnet-eb7dc59d"
+    V_ASSIGN_PUBLIC_IP: yes
+    V_SECURITY_GROUP_ID: "sg-1fc50166"
+
+  tasks:
+###############################################################
+#create an instance
+###############################################################
+
+    - name: create new instance
+      ec2:
+        key_name: "{{V_KEY_NAME}}"
+        instance_type: "{{V_INSTANCE_TYPE}}"
+        image: "{{V_IMAGE_ID}}"
+        wait: true
+        region: "{{V_REGION}}"
+        vpc_subnet_id: "{{V_SUBNET_ID}}"
+        assign_public_ip: "{{V_ASSIGN_PUBLIC_IP}}"
+        instance_tags: '{"Environment": "Test", "Name": "[GIOT]ansible-test-for-cto(Roger)", "Project": "GIOT", "Subsystem": "Others", "Tier": ""}'
+        group_id: "{{V_SECURITY_GROUP_ID}}"
+      register: V_EC2
+
+    - name: display ec2 information
+      debug:
+        msg:
+          - "##################################################"
+          - "{{item}}"
+          - "##################################################" 
+      with_items: "{{V_EC2.instances}}"
+
+    - name: wait for ssh to come up
+      wait_for:
+        host: "{{item.public_ip}}"
+        port: 22
+        delay: 30
+        timeout: 180
+        state: started
+      with_items: "{{V_EC2.instances}}"
+
+    - name: display ec2 ready to connect
+      debug:
+        msg:
+          - "##################################################"
+          - "instance: {{item.id}}, IP: {{item.public_ip}} are ready to connect"
+          - "##################################################" 
+      with_items: "{{V_EC2.instances}}"
+
+    - name: you can assing task to this instance now
+      wait_for:
+        timeout: 10
+
+###############################################################
+#term instance
+###############################################################
+    - name: terminate instance
+      ec2: 
+        state: "absent"
+        instance_ids: "{{item.id}}"
+        region: "{{V_REGION}}"
+      with_items:
+        - "{{V_EC2.instances}}"
+
+

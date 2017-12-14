@@ -1,0 +1,85 @@
+- hosts: localhost
+  connection: local
+  gather_facts: false
+    
+  vars:
+    V_REGION: "ap-northeast-1"
+    V_INST_IDS: "i-01ca63eda6202c671"
+
+  tasks:
+##############################################################
+#get instance status
+##############################################################
+    - name: get instance status
+      ec2_instance_facts: 
+        region: "{{V_REGION}}"
+        instance_ids: 
+          - "{{V_INST_IDS}}"
+      register: V_EC2
+
+    - name: display ec2 status
+      debug:
+        msg:
+          - "##################################################"
+          - "{{item}}"
+          - "##################################################" 
+      with_items: "{{V_EC2.instances}}"
+
+###############################################################
+##stop instance
+###############################################################
+    - name: stop ec2
+      ec2:
+        instance_ids: "{{V_INST_IDS}}"
+        region: "{{V_REGION}}"
+        state: stopped
+        wait: true
+
+    - name: get instance status
+      ec2_instance_facts:
+        region: "{{V_REGION}}"
+        instance_ids: 
+          - "{{V_INST_IDS}}"
+      register: V_EC2
+
+    - name: display ec2 status
+      debug:
+        msg:
+          - "##################################################"
+          - "{{item.state}}"
+          - "##################################################" 
+      with_items: "{{V_EC2.instances}}"
+
+###############################################################
+##start instance
+###############################################################
+    - name: start ec2
+      ec2:
+        instance_ids: "{{V_INST_IDS}}"
+        region: "{{V_REGION}}"
+        state: running
+        wait: true
+
+    - name: get instance status
+      ec2_instance_facts:
+        region: "{{V_REGION}}"
+        instance_ids: 
+          - "{{V_INST_IDS}}"
+      register: V_EC2
+
+    - name: wait for ssh to come up
+      wait_for:
+        host: "{{item.public_ip_address}}"
+        port: 22
+        delay: 30
+        timeout: 120
+        state: started
+      with_items: "{{V_EC2.instances}}"
+
+    - name: display ec2 status
+      debug:
+        msg:
+          - "##################################################"
+          - "{{item.state}}"
+          - "##################################################" 
+      with_items: "{{V_EC2.instances}}"
