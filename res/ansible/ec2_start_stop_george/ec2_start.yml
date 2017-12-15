@@ -32,6 +32,8 @@
         timeout: 120
         state: started
       with_items: "{{V_EC2.instances}}"
+      tags:
+        - wait
 
     - name: display ec2 status
       debug:
