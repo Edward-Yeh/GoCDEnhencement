@@ -1,0 +1,1 @@
+redis ansible_host=ec2-54-193-102-178.us-west-1.compute.amazonaws.com ansible_user=ec2-user ansible_private_key_file=./inventory/dropap_gear_zone_sig.pem
