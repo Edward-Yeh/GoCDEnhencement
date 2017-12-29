@@ -1,0 +1,60 @@
+---
+- name: use the lineinfile module to setup mec and mqtt config files 
+  hosts: mec 
+  gather_facts: false
+  vars:
+     redis_db_host: mec-redis001.dropap.com
+     redis_db_port: 6379
+     redis_db_auth: 12345678
+     mec_mqtt_account: su_MEC-A
+     mec_mqtt_password: 12345678
+     mqtt_private_ip: ns001.dropap.com
+     mqtt_public_ip: ns001.dropap.com
+
+  tasks:
+    - name: mec config - redis.host
+      lineinfile:
+        path: /home/hank_chen/mec_release_20160201/mec/config/mec.conf
+        regexp: 'redis\.host\s*='
+        line: "redis.host = {{ redis_db_host }}"
+        state: present
+        backup: yes
+
+    - name: mec config - redis.port
+      lineinfile:
+        path: /home/hank_chen/mec_release_20160201/mec/config/mec.conf
+        regexp: 'redis\.port\s*='
+        line: "redis.port = {{ redis_db_port }}"
+        state: present
+        backup: yes
+
+    - name: mec config - redis.auth
+      lineinfile:
+        path: /home/hank_chen/mec_release_20160201/mec/config/mec.conf
+        regexp: 'redis\.auth\s*='
+        line: "redis.auth = {{ redis_db_auth }}"
+        state: present
+        backup: yes
+
+    - name: mec config - mec.mqtt.account 
+      lineinfile:
+        path: /home/hank_chen/mec_release_20160201/mec/config/mec.conf
+        regexp: 'mec\.mqtt\.account\s*='
+        line: "mec.mqtt.account = {{ mec_mqtt_account }} # physical MEC's username/clientid, use to connect to mosquitto"
+        state: present
+        backup: yes
+
+    - name: mec config - mec.mqtt.password 
+      lineinfile:
+        path: /home/hank_chen/mec_release_20160201/mec/config/mec.conf
+        regexp: 'mec\.mqtt\.password\s*='
+        line: "mec.mqtt.password = {{ mec_mqtt_password }} # MEC's password"
+        state: present
+
+    - name: mqtt config - mosquitto2
+      lineinfile:
+        path: /home/hank_chen/mec_release_20160201/mec/config/mqtt.conf
+        regexp: 'mosquitto2\s*='
+        line: "mosquitto2 = {{ mqtt_private_ip }}:80/{{ mqtt_public_ip }}:80/1"
+        state: present
+        backup: yes

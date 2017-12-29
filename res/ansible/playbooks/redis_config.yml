@@ -1,0 +1,16 @@
+---
+- name: use the template module to setup Redis password
+  hosts: redis
+  gather_facts: false
+  vars:
+    redis_db_password: 12345678
+
+  tasks:
+    - name: generate the redis config file
+      template:
+        src: templates/6379.conf.j2
+        dest: /etc/redis/6379.conf
+        owner: root
+        group: root
+        mode: 0644
+        backup: yes

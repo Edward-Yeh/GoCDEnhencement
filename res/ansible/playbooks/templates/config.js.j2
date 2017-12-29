@@ -1,0 +1,465 @@
+var log4js = require('log4js');
+var logger = log4js.getLogger();
+
+log4js.configure({
+  appenders: [
+    { type: 'console' }
+  ]
+});
+
+logger.setLevel('DEBUG');
+
+exports.log4js = log4js;
+exports.logger = logger;
+exports.CN = false;
+
+exports.BLACKLOUD = false;
+exports.BKY = false;
+exports.DROPAP = true;
+exports.SECURE = false;
+exports.SECOM = false;
+exports.BAOFENG = false;
+exports.TRACKER = true;
+//exports.ACER = true;
+//exports.SANJET = true;
+
+if (exports.BLACKLOUD) {
+    exports.email_rex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+    exports.phone_e164_rex = /^\+\d{10,14}$/i;
+    exports.username_rex = /^[A-Z0-9._-]{3,20}$/i;
+    exports.password_rex = /^[A-Z0-9]{8,15}$/i;
+    exports.mail_sender = "notice.blackloud.com <no-reply@notice.blackloud.com>";
+    exports.mail_subject = "[blackloud] ";
+    exports.app_name = "CleverEyes";
+} else if (exports.BKY) {
+    exports.email_rex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+    exports.phone_e164_rex = /^\+\d{10,14}$/i;
+    exports.username_rex = /^[A-Z0-9._@-\s]{3,256}$/i;
+    exports.password_rex = /^[A-Z0-9%+._@-\s]{8,15}$/i;
+    exports.mail_sender = "no-reply@notify.blackloud.cn <no-reply@notify.blackloud.cn>";
+    exports.mail_subject = "[blackloud.cn] ";
+    exports.app_name = "CleverEyes";
+} else if (exports.DROPAP) {
+    exports.email_rex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+    exports.phone_e164_rex = /^\+\d{10,14}$/i;
+    exports.username_rex = /^[A-Z0-9._@-\s]{3,256}$/i;
+    exports.password_rex = /^[A-Z0-9%+._@-\s]{8,15}$/i;
+    exports.mail_sender = "no-reply@dropap <no-reply@notice.dropap.com>";
+    exports.mail_subject = "[dropap] ";
+    exports.app_name = "CleverEyes";
+} else if (exports.SECURE) {
+    exports.email_rex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+    exports.phone_e164_rex = /^\+\d{10,14}$/i;
+    exports.username_rex = /^[A-Z0-9._@-\s]{3,256}$/i;
+    exports.password_rex = /^[A-Z0-9%+._@-\s]{8,15}$/i;
+    exports.mail_sender = "no-reply@secom.mobi <no-reply@notice.securepilot.com>";
+    exports.mail_subject = "[secom] ";
+    exports.app_name = "CleverEyes";
+} else {
+    exports.email_rex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+    exports.phone_e164_rex = /^\+\d{10,14}$/i;
+    exports.username_rex = /^[A-Z0-9._@-\s]{3,256}$/i;
+    exports.password_rex = /^[A-Z0-9%+._@-\s]{8,15}$/i;
+    exports.mail_sender = "no-reply@dropap <no-reply@notice.dropap.com>";
+    exports.mail_subject = "[qiwo] ";
+    exports.app_name = "CleverEyes";
+}
+
+exports.MAX_LOGIN_HISTORY_RECORD = 3000;
+
+exports.https_configure = {
+  "CA_PATH": "./secrets/ca.pem",
+  "KEY_PATH": "./secrets/key.pem",
+  "CERT_PATH": "./secrets/cert.crt"
+};
+
+exports.redis_session_server = {
+  "PASS": "1c5a9e5da00",
+  "DEBUG": false,
+  "TIMEOUT": 21600,
+  "EMAIL_VALIDATION_DB": 2,
+  "EMAIL_ACTIVE_EXPIRATION": 172800,
+  "RESET_PASSWORD_DB": 3,
+  "RESET_PWD_EXPIRE": 172800,
+  "CAMERA_EVENT_DB": 4
+};
+
+exports.ca_api_client = {
+  "WSDL": "https://pki001.dropap.com/ejbca/ejbcaws/ejbcaws?wsdl",
+  "CLIENT_KEY": __dirname + '/ca_api_client_secrets/key.pem',
+  "CLIENT_CERT": __dirname + '/ca_api_client_secrets/cert.pem',
+  "CA_CERT": __dirname + '/ca_api_client_secrets/ca.pem',
+  "CERT_AUTHORITY": "DropAPRootCA"
+};
+
+exports.mailer = {
+    "host": "mail.dropap.com",
+    "secureConnection": true,
+    "port": 465,
+    "auth": {
+        "user": "no-reply",
+        "pass": "gemtek2014"
+    },
+    "greetingTimeout": 30000
+};
+
+exports.msg_api_server = {
+  "IP": "http://abtestcs.freepp.com/cs/2.0/",
+  "API_VALIDATE": "sms_validate.php",
+  "API_SMS": "register.php",
+  "PARS": {
+    "st": "1",
+    "vr": "204",
+    "os": "android",
+    "ov": "4.0.3",
+    "md": "HTC+sensation+Z710",
+    "mf": "HTC",
+    "gm": "xxx@xxx.com",
+    "cv": "",
+    "pro": ""
+  }
+};
+
+/* add msg_sms information */
+exports.msg_sms_server = {
+"host": "pincode.freepp.com",
+"path": "/sms_center/2.0/sms_send_message.php",
+"rt"  : '2',
+"rate": '0',
+"mt"  : '1',
+"bcode" : '1423000',
+"codelength":'4'
+};
+
+/* SMS pin code default expired time */
+exports.pin_expired_time_min = 3;
+/* SMS document default expired time */
+exports.doc_expired_time_sec = 432000;
+
+exports.msg_push_type = {
+  "APNS": 1,
+  "GCM": 2,
+  "MQTT": 4,
+  "MPNS": 8,
+  "APNS_MQTT": 5
+};
+
+exports.suffix_index = 0;
+exports.global_maxsockets = 100000;
+exports.local_maxsockets = 100000;
+exports.SELF = "api.dropap.com:80";
+
+exports.login_singleton = true;
+
+/* redirect url for error page */
+exports.redirect_url = null;
+
+/*
+ * STORAGE: save files to AWS S3 or Aliyun OSS
+ *     o : S3
+ *     1 : OSS
+ *     2 : IBM
+ */
+exports.STORAGE = 0;
+
+/*
+ * Bucket name for storage
+ *    0 : S3 bucket
+ *    1 : OSS bucket
+ *    2 : IBM containner
+ */
+exports.storage_bucket = {
+    "0" : "dropapcamevent",
+    "1" : "testcloudlitedm",
+    "2" : "Gemtek_Video"
+};
+
+/* IBM object storage */
+exports.softlayer_username = '';
+exports.softlayer_password = '';
+exports.softlayer_authUrl =  '';
+exports.softlayer_AuthVersion = 1;
+exports.softlayer_expire_time = 2592000;   //after x seconds , it will remove ;
+                                           // 60(sec) * 60(min) * 24(HR) * 30(day) = 2592000(sec)
+
+/* IBM object storage temporary url setting */
+exports.expirationTimeInSeconds = 60*2;
+exports.temp_url_key = "gemtek2015";
+
+/* Default bucket for camera event */
+exports.BUCKET = 'testcamevent';
+
+/* proxy server for hls */
+exports.ibm_proxy_server_url = "https://MobileCam-dev001.securepilot.com:8080/cam/download_ts";
+
+/* OSS host */
+exports.OSSHOST = 'oss-cn-hangzhou.aliyuncs.com';
+exports.OSSHOST_INTERNAL = 'oss-cn-hangzhou-internal.aliyuncs.com';
+/* OSS credentials */
+exports.OSS_accessId = '';
+exports.OSS_accessKey = '';
+
+/* Systeme manager  */
+exports.SYSTEM_MGR = {
+    username: "dropapadmin",
+    password: "dropapadmin@zabbix2015",
+    IP: "sysm001.dropap.com",
+    PATH: "/zabbix/api_jsonrpc.php"
+};
+
+exports.elb_enable_https_80 = true;
+
+/* SMS configuration */
+
+exports.SMS = {
+    "hostname": "http://smsapi.c123.cn",
+    "path": "/OpenPlatform/OpenApi",
+    "data_platform_path": "/DataPlatform/DataApi"
+};
+
+exports.AC = "";
+exports.AUTHKEY = "";
+exports.CGID = "";
+exports.CSID = "";
+
+exports.error_code = {
+    '1': '操作成功',
+    '0': '帐户格式不正确(正确的格式为:员工编号@企业编号)',
+    '-1': '服务器拒绝(速度过快、限时或绑定IP不对等) 如遇速度过快可延时再发',
+    '-2': '密钥不正确',
+    '-3': '密钥已锁定',
+    '-4': '参数不正确(内容和号码不能为空，手机号码数过多，发送时间错误等)',
+    '-5': '无此帐户',
+    '-6': '帐户已锁定或已过期',
+    '-7': '帐户未开启接口发送',
+    '-8': '不可使用该通道组',
+    '-9': '帐户余额不足',
+    '-10': '内部错误',
+    '-11': '扣费失败'
+};
+
+exports.googleapi = {
+  "server_account": "",
+  "pkey": ""
+};
+
+
+exports.PRODUCTION = false;
+
+exports.AppStore = {
+    hostname: exports.PRODUCTION? "buy.itunes.apple.com": "sandbox.itunes.apple.com",
+    port: "443",
+    path: "/verifyReceipt",
+    ServerPwd: ""
+};
+
+exports.mqtt_credential = {
+  clientId: "su_observer",
+  username: 'administrator',
+  password: '12345678'
+};
+
+exports.elastic_config = {
+  //ip: "dw001.dropap.com",
+  ip: "172.31.2.229",
+  port : 9200,
+  index : "mqtt-test",
+  type : "mqtt",
+  message_box_index : "msg_box",
+  message_box_type : "msg_test",
+  tracker_index : "tracker_box",
+  tracker_type : "tracker_test"
+};
+
+
+/*********** Orginal lib/config.js ***********/
+
+
+// Huzza provided service list
+exports.service_list = [
+  "USER", "HA", "CAM", "MSG", "CVR", "EL", "RELAY"
+];
+
+// Huzza Couchbase
+exports.db = "couchbase://coredb001.dropap.com:8091"; /* cluster ["couchbase://localhost"] */
+
+exports.initial_id = {
+  "uid": 100000000,
+  "gid": 500000000
+};
+
+// Huzza user/device database
+exports.userdb = {
+  "URL": "http://172.30.0.80:8092",
+  "bucket": "user",
+  "pin_length": 8, // lenth of pin code for device
+  "pwd_length": 8, // lenth of password for device
+  "phone_realm": ":Users:",
+  //"email_realm": ":Mail:",
+  "email_realm": ":Users:",
+  //"email_realm": ":Name:",
+  "name_realm": ":Users:",
+  "device_realm": ":Users:",
+ // "reg_id_realm": ":Users:",
+  "realm": "Users"
+};
+
+// Message service(FreePP) database
+exports.MSGdb = {
+  "URL": "http://172.30.0.80:8092",
+  "bucket": "user"
+};
+
+// Home-automation service database
+exports.HAdb = {
+  "URL": "http://172.30.0.80:8092",
+  "bucket": "user"
+};
+
+// Home-automation service database
+exports.CAMdb = {
+  "URL": "http://172.30.0.80:8092",
+  "bucket": "user"
+};
+
+// Cloud video recording(CVR) service database
+exports.CVRdb = {
+  "URL": "http://172.30.0.80:8092",
+  "bucket": "user"
+};
+
+exports.ELdb = {
+  "URL": "http://172.30.0.80:8092",
+  "bucket": "user"
+};
+
+exports.RELAYdb = {
+  "URL": "http://172.30.0.80:8092",
+  "bucket": "user"
+};
+
+exports.freepp = {
+  "login_URL": "http://abtestcs.freepp.com/cs/2.0/login.php",
+  "send_mms_URL": "http://abtestcs.freepp.com:80/freeppmobile/2.0/send_mms.php",
+  "get_message_URL": "http://rootcs1.freepp.com/pushservice/2.0/get_message.php",
+  "ack_message_URL": "http://abtestcs.freepp.com/pushservice/2.0/ack_message.php"
+};
+
+exports.freeppLoginProfile = {
+  "mn": "",
+  "id": "",
+  "cb": "3245",
+  "md5": "",
+  "mid": "",
+  "pushsvc": "4",
+  "os": "android",
+  "ov": "4.0.3",
+  "st": "1",
+  "mf": "HTC",
+  "md": "New 1",
+  "gm": "mail",
+  "vr": "204",
+  "cv": "",
+  "pro": ""
+};
+
+exports.freeppSendmmsProfile = {
+  "id": "",
+  "time": "",
+  "css": "",
+  "mobiledst": "",
+  "freeppdst": "",
+  "srcappname": "ipphone",
+  "ver": "2",
+  "mime": "text/plain",
+  "text": ""
+};
+
+exports.freeppGetMsgProfile = {
+  "session": "",
+  "srcappname": "ipphone"
+};
+
+exports.freeppAckMsgProfile = {
+  "session": "",
+  "srcappname": "ipphone"
+};
+
+exports.web_server = {
+  "port": 80,
+  "https_key":  __dirname + "/../../session_mgr/secrets/key.pem",
+  "https_cert":  __dirname + "/../../session_mgr/secrets/cert.pem",
+  "https_ca":  __dirname + "/../../session_mgr/secrets/ca.pem",
+  "admin_email": "service@triclouds.com",
+  "customer_email": "unknownUser@triclouds.com",
+  "checkEmail": false
+};
+
+/* default mqtt_server, it will be replaced by MSG_info in System_Config bucket in CoreDB */
+exports.mqtt_server = {
+  "ip": "ns001.dropap.com",
+  "port": "80",
+  "pwd_length": 8
+};
+
+exports.mec_server = {
+  "ip": "mec001.dropap.com",
+  "port": 50000,
+  "msg_version": "1.0"
+};
+
+exports.mec_redis_server = {
+  "ip": "mec-redis001.dropap.com",
+  "port": 6379,
+  "pass": "12345678",
+  "auth_db": 0
+};
+
+exports.APNS_TEST_LENGTH = 10; // Test string for APNS. MAX:135;
+
+exports.relay_server = {
+  "ip": "rs001.dropap.com",
+  "port": "80",
+  "free_trial": {
+    "permitted_time": "1800",
+    "timeout": "1420070400",
+  }
+};
+
+exports.media_server = {
+  "ip": "52.74.64.42",
+  "live_port": "80",
+  "playback_port": "443",
+  "session_time": 1800 //seconds
+};
+
+exports.cvr = {
+  "ip": "54.255.140.86",
+  "port": "8080",
+  "event_port": "443",
+  "FETCH_DURATION": 1, //minutes
+  "SHIFT_TIME": 3000, //in millisecond
+  "EVENT_LIMIT": 200,
+  "MAX_EVENT_TYPE": 255,
+  "MAX_VALID_VIDEO_LENGTH": 60000, //one minute in milliseconds
+  "STORAGE_LINK_EXPIRE_TIME": 300, //in seconds
+  "VIDEO_EXPIRE_TIME": 2592000,
+  "SHARE_EXPIRE_TIME": 172800, // 48hrs
+  "BILLING_CVR_EXTENED_TIME": 86400000
+};
+
+exports.DM = {
+  ip: "localhost",
+  port: "443"
+};
+
+exports.notification = {
+    host : "http://52.8.54.228:8080"
+}
+
+exports.owner_change_notification = false;
+
+/**/
+exports.system_notification_topic_suffix = "-SYS";
+
+exports.ENABLE_ICE = false;

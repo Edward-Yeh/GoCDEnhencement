@@ -1,0 +1,83 @@
+###############################################################
+# MEC Configuration
+###############################################################
+
+mec.message.port=50000
+mec.message.idle=60
+
+mec.control.port=50001
+mec.control.idle=600
+mec.control.idle=300		# seconds
+
+mec.service.thread_number = 3
+
+mec.queue.length = 300      # max length of user message queue
+
+mec.service.max_retrieve = 50		# max retrieve message per request
+
+mec.service.max_recv_frame_length = 16777216   # max frame length MEC can receive, set this value to avoid a abnormal frame
+
+mec.expire.threshold = 3600000  # expire threshold, unit: ms. MEC will delete (timestamp + ttl + expire_threshold) message automatically 
+
+mec.status_observer.start = 0   # Should start offline status observer service. 1 - start   0 - don't start
+
+mec.mqtt_router.start = 1       # Should start mqtt router service. ( 1 - start   0 - don't start )
+
+mec.show_logger_status = 0      # if print logger status to stdout ( 1 - show   0 - don't show )
+
+#===================== MQTT configuration ===================#
+mec.mqtt.account = su_MEC-A    	# physical MEC's username/clientid, use to connect to mosquitto
+mec.mqtt.password = 12345678	# MEC's password 
+
+#===================== APNS configuration ===================#
+apns.enable = 1         # APNS enable: 0-disable; 1-enable
+apns.work_mode = 1      # APNS client's work mode. 0-sandbox, 1-production
+apns.send_thread = 3
+
+ios.dual_push.enable = 1		# Enable iOS dual push (MQTT + APNS)
+ios.dual_push.feedback_timeout = 5000		# iOS dual push MQTT feedback timeout, (unit: ms)
+
+apns.sandbox.host = gateway.sandbox.push.apple.com
+apns.sandbox.port = 2195
+apns.sandbox.p12file = config/cert_sandbox.p12
+apns.sandbox.password = unknown
+
+apns.production.host = gateway.push.apple.com
+apns.production.port = 2195
+apns.production.p12file = config/cert_production.p12
+apns.production.password = unknown
+
+apns.feedback.host = feedback.push.apple.com
+apns.feedback.port = 2196
+
+###############################################################
+# Serial ID Generation Service Configuration
+###############################################################
+
+idgen.serial.end = 230000000
+idgen.serial.step = 10000000
+
+###############################################################
+# DB Configuration
+###############################################################
+
+mec.db.type = redis					# which db to use, redis or mysql
+
+#===================== Redis configuration ===================#
+redis.host=mec-redis001.dropap.com                # msg.securepilot.com
+redis.port=6379
+redis.auth=12345678
+
+#===================== MySQL configuration ===================#
+# Mysql configuration
+mysql.host=localhost
+mysql.database=ha
+mysql.username=root
+mysql.password=123456
+
+#===================== Connection pool =======================#
+c3p0.min_size=5
+c3p0.max_size=20
+c3p0.timeout=3600
+c3p0.max_statements=100
+c3p0.validate=false

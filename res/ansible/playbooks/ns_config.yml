@@ -1,0 +1,18 @@
+---
+- name: use the template module to setup mosquitto config file 
+  hosts: ns
+  gather_facts: false
+  vars:
+     redis_db_ip: 172.31.8.107
+     redis_db_port: 6379
+     redis_db_password: 12345678
+
+  tasks:
+    - name: generate the mosquitto config file
+      template:
+        src: templates/mosquitto.conf.j2
+        dest: /etc/mosquitto/mosquitto.conf
+        owner: root
+        group: root
+        mode: 0644
+        backup: yes
