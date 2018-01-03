@@ -261,7 +261,7 @@ exports.mqtt_credential = {
 
 exports.elastic_config = {
   //ip: "dw001.dropap.com",
-  ip: "172.31.2.229",
+  ip: "{{ elasticsearch_ip }}",
   port : 9200,
   index : "mqtt-test",
   type : "mqtt",
@@ -281,7 +281,7 @@ exports.service_list = [
 ];
 
 // Huzza Couchbase
-exports.db = "couchbase://coredb001.dropap.com:8091"; /* cluster ["couchbase://localhost"] */
+exports.db = "couchbase://{{ couchbase_host }}:8091"; /* cluster ["couchbase://localhost"] */
 
 exports.initial_id = {
   "uid": 100000000,
@@ -397,29 +397,29 @@ exports.web_server = {
 
 /* default mqtt_server, it will be replaced by MSG_info in System_Config bucket in CoreDB */
 exports.mqtt_server = {
-  "ip": "ns001.dropap.com",
-  "port": "80",
+  "ip": "{{ mqtt_ip }}",
+  "port": "{{ mqtt_port }}",
   "pwd_length": 8
 };
 
 exports.mec_server = {
-  "ip": "mec001.dropap.com",
-  "port": 50000,
+  "ip": "{{ mec_ip }}",
+  "port": {{ mec_port }},
   "msg_version": "1.0"
 };
 
 exports.mec_redis_server = {
-  "ip": "mec-redis001.dropap.com",
-  "port": 6379,
-  "pass": "12345678",
+  "ip": "{{ redis_ip }}",
+  "port": {{ redis_port }},
+  "pass": "{{redis_password}}",
   "auth_db": 0
 };
 
 exports.APNS_TEST_LENGTH = 10; // Test string for APNS. MAX:135;
 
 exports.relay_server = {
-  "ip": "rs001.dropap.com",
-  "port": "80",
+  "ip": "{{ relay_ip }}",
+  "port": "{{ relay_port }}",
   "free_trial": {
     "permitted_time": "1800",
     "timeout": "1420070400",

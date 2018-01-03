@@ -1,5 +1,5 @@
 ---
-- name: use the blockinfile module to setup service manager's config
+- name: use template module to setup service manager's config
   hosts: serm1
   gather_facts: false
   vars:
@@ -16,73 +16,11 @@
     elasticsearch_ip: 172.31.2.229
 
   tasks:
-    - name: MQTT server
-      blockinfile:
-        path: /home/hank_chen/blazing_sm_20171121/sm_dev/serMgr/config.js
-        block: |
-          exports.mqtt_server = {
-            "ip": "{{ mqtt_ip }}",
-            "port": "{{ mqtt_port }}",
-            "pwd_length": 8
-          };
-        backup: yes
-
-    - name: MEC server
-      blockinfile:
-        path: /home/hank_chen/blazing_sm_20171121/sm_dev/serMgr/config.js
-        block: |
-          exports.mec_server = {
-            "ip": "{{ mec_ip }}",
-            "port": {{ mec_port }},
-            "msg_version": "1.0"
-          };
-        backup: yes
-
-    - name: Redis server
-      blockinfile:
-        path: /home/hank_chen/blazing_sm_20171121/sm_dev/serMgr/config.js
-        block: |
-          exports.mec_redis_server = {
-            "ip": "{{ redis_ip }}",
-            "port": {{ redis_port }},
-            "pass": "{{ redis_password }}",
-            "auth_db": 0
-          };
-        backup: yes
-
-    - name: Couchbase
-      lineinfile:
-        path: /home/hank_chen/blazing_sm_20171121/sm_dev/serMgr/config.js
-        regexp: 'exports\.db\s*=\s*"couchbase:'
-        line: 'exports.db = "couchbase://{{ couchbase_host }}:8091"; /* cluster ["couchbase://localhost"] */'
-        backup: yes
-
-    - name: Relay server
-      blockinfile:
-        path: /home/hank_chen/blazing_sm_20171121/sm_dev/serMgr/config.js
-        block: |
-          exports.relay_server = {
-            "ip": "{{ relay_ip }}",
-            "port": "{{ relay_port }}",
-            "free_trial": {
-               "permitted_time": "1800",
-               "timeout": "1420070400",
-            }
-          };
-        backup: yes
-
-    - name: Elasticsearch server
-      blockinfile:
-        path: /home/hank_chen/blazing_sm_20171121/sm_dev/serMgr/config.js
-        block: |
-          exports.elastic_config = {
-            ip: "{{ elasticsearch_ip }}",
-            port : 9200
-            index : "mqtt-test",
-            type : "mqtt",
-            message_box_index : "msg_box",
-            message_box_type : "msg_test",
-            tracker_index : "tracker_box",
-            tracker_type : "tracker_test"
-          };          
+    - name: generate the service manager config file
+      template:
+        src: templates/config.js.j2
+        dest: /home/hank_chen/blazing_sm_20171121/sm_dev/serMgr/config.js
+        owner: hank_chen
+        group: hank_chen
+        mode: 0755
         backup: yes
