@@ -1,9 +1,10 @@
 ---
-- name: use the template module to setup Redis password
+- name: set up redis server config and make sure it has restarted 
   hosts: redis
   gather_facts: false
   vars:
     redis_db_password: 12345678
+    redis_db_port: 6379
 
   tasks:
     - name: generate the redis config file
@@ -14,3 +15,10 @@
         group: root
         mode: 0644
         backup: yes
+    - name: restart redis server
+      shell: /usr/local/bin/redis-server /etc/redis/6379.conf
+      become: true
+    - name: wait 300 seconds for redis server restart, don't start checking for 10 seconds
+      wait_for:
+        port: "{{ redis_db_port }}"
+        delay: 10 
