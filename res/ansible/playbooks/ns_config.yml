@@ -19,7 +19,7 @@
     - debug:
         msg:
           - "########################################################"
-          - "[ec2_instance_facts] Redis private IP: {{ redis_private_ip }}"
+          - "[ec2_instance_facts] radis_private_ip: {{ redis_private_ip }}"
           - "########################################################"
 
 
@@ -35,7 +35,7 @@
     - debug:
         msg:
           - "#######################################################"
-          - "redis_db_ip: {{ redis_db_ip }}"
+          - "[var] redis_db_ip: {{ redis_db_ip }}"
           - "#######################################################"
     - name: generate the mosquitto config file
       template:
