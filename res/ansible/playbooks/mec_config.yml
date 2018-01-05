@@ -9,42 +9,8 @@
       ns_instance_id: "i-0eb0d9d7940242f4c"
 
   tasks:
-    - name: get redis instance status
-      ec2_instance_facts:
-        region: "{{ aws_region }}"
-        instance_ids:
-          - "{{ redis_instance_id }}"
-      register: redis
-    - set_fact:
-        redis_private_ip: "{{ redis.instances[0].private_ip_address }}"
-        redis_private_dns: "{{ redis.instances[0].private_dns_name }}"
-    - debug:
-        msg:
-          - "########################################################"
-          - "[ec2_instance_facts] redis_private_ip: {{ redis_private_ip }}"
-          - "[ec2_instance_facts] redis_private_dns: {{ redis_private_dns }}"
-          - "########################################################"
-
-    - name: get  instance status
-      ec2_instance_facts:
-        region: "{{ aws_region }}"
-        instance_ids:
-          - "{{ ns_instance_id }}"
-      register: ns
-    - set_fact:
-        ns_private_ip: "{{ ns.instances[0].private_ip_address }}"
-        ns_public_ip: "{{ ns.instances[0].public_ip_address }}"
-        ns_private_dns: "{{ ns.instances[0].private_dns_name }}"
-        ns_public_dns: "{{ ns.instances[0].public_dns_name }}"
-    - debug:
-        msg:
-          - "########################################################"
-          - "[ec2_instance_facts] ns_private_ip: {{ ns_private_ip }}"
-          - "[ec2_instance_facts] ns_public_ip: {{ ns_public_ip }}"
-          - "[ec2_instance_facts] ns_private_dns: {{ ns_private_dns }}"
-          - "[ec2_instance_facts] ns_public_dns: {{ ns_public_dns }}"
-          - "########################################################"
-
+    - import_tasks: get_redis_info.yml
+    - import_tasks: get_ns_info.yml
 
 - name: use the lineinfile module to setup mec and mqtt config files 
   hosts: mec 
@@ -57,7 +23,8 @@
      mec_mqtt_password: 12345678
      mqtt_private_ip: "{{ hostvars.localhost.ns_private_ip }}"
      mqtt_public_ip: "{{ hostvars.localhost.ns_public_ip }}"
-     user: hank_chen
+     user: "hank_chen"
+     config_path: "mec_release_20160201"
 
   tasks:
     - debug:
@@ -69,7 +36,7 @@
           - "########################################################"
     - name: mec config - redis.host
       lineinfile:
-        path: "/home/{{ user }}/mec_release_20160201/mec/config/mec.conf"
+        path: "/home/{{ user }}/{{ config_path }}/mec/config/mec.conf"
         regexp: 'redis\.host\s*='
         line: "redis.host = {{ redis_db_ip }}"
         state: present
@@ -77,7 +44,7 @@
 
     - name: mec config - redis.port
       lineinfile:
-        path: /home/hank_chen/mec_release_20160201/mec/config/mec.conf
+        path: "/home/{{ user }}/{{ config_path }}/mec/config/mec.conf"
         regexp: 'redis\.port\s*='
         line: "redis.port = {{ redis_db_port }}"
         state: present
@@ -85,7 +52,7 @@
 
     - name: mec config - redis.auth
       lineinfile:
-        path: /home/hank_chen/mec_release_20160201/mec/config/mec.conf
+        path: "/home/{{ user }}/{{ config_path }}/mec/config/mec.conf"
         regexp: 'redis\.auth\s*='
         line: "redis.auth = {{ redis_db_auth }}"
         state: present
@@ -93,7 +60,7 @@
 
     - name: mec config - mec.mqtt.account 
       lineinfile:
-        path: /home/hank_chen/mec_release_20160201/mec/config/mec.conf
+        path: "/home/{{ user }}/{{ config_path }}/mec/config/mec.conf"
         regexp: 'mec\.mqtt\.account\s*='
         line: "mec.mqtt.account = {{ mec_mqtt_account }} # physical MEC's username/clientid, use to connect to mosquitto"
         state: present
@@ -101,14 +68,14 @@
 
     - name: mec config - mec.mqtt.password 
       lineinfile:
-        path: /home/hank_chen/mec_release_20160201/mec/config/mec.conf
+        path: "/home/{{ user }}/{{ config_path }}/mec/config/mec.conf"
         regexp: 'mec\.mqtt\.password\s*='
         line: "mec.mqtt.password = {{ mec_mqtt_password }} # MEC's password"
         state: present
 
     - name: mqtt config - mosquitto2
       lineinfile:
-        path: /home/hank_chen/mec_release_20160201/mec/config/mqtt.conf
+        path: "/home/{{ user }}/{{ config_path }}/mec/config/mqtt.conf"
         regexp: 'mosquitto2\s*='
         line: "mosquitto2 = {{ mqtt_private_ip }}:80/{{ mqtt_public_ip }}:80/1"
         state: present

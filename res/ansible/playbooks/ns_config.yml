@@ -8,20 +8,7 @@
       redis_instance_id: "i-046254f80e3cf985b"
 
   tasks:
-    - name: get instance status
-      ec2_instance_facts:
-        region: "{{ aws_region }}"
-        instance_ids:
-          - "{{ redis_instance_id }}"
-      register: ec2
-    - set_fact: 
-        redis_private_ip: "{{ ec2.instances[0].private_ip_address }}"
-    - debug:
-        msg:
-          - "########################################################"
-          - "[ec2_instance_facts] radis_private_ip: {{ redis_private_ip }}"
-          - "########################################################"
-
+    - import_tasks: get_redis_info.yml
 
 - name: use the template module to setup mosquitto config file 
   hosts: ns
