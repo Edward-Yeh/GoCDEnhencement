@@ -1,22 +1,77 @@
 ---
+- hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+      aws_region: "us-west-1"
+      redis_instance_id: "i-046254f80e3cf985b"
+      ns_instance_id: "i-0eb0d9d7940242f4c"
+
+  tasks:
+    - name: get redis instance status
+      ec2_instance_facts:
+        region: "{{ aws_region }}"
+        instance_ids:
+          - "{{ redis_instance_id }}"
+      register: redis
+    - set_fact:
+        redis_private_ip: "{{ redis.instances[0].private_ip_address }}"
+        redis_private_dns: "{{ redis.instances[0].private_dns_name }}"
+    - debug:
+        msg:
+          - "########################################################"
+          - "[ec2_instance_facts] redis_private_ip: {{ redis_private_ip }}"
+          - "[ec2_instance_facts] redis_private_dns: {{ redis_private_dns }}"
+          - "########################################################"
+
+    - name: get  instance status
+      ec2_instance_facts:
+        region: "{{ aws_region }}"
+        instance_ids:
+          - "{{ ns_instance_id }}"
+      register: ns
+    - set_fact:
+        ns_private_ip: "{{ ns.instances[0].private_ip_address }}"
+        ns_public_ip: "{{ ns.instances[0].public_ip_address }}"
+        ns_private_dns: "{{ ns.instances[0].private_dns_name }}"
+        ns_public_dns: "{{ ns.instances[0].public_dns_name }}"
+    - debug:
+        msg:
+          - "########################################################"
+          - "[ec2_instance_facts] ns_private_ip: {{ ns_private_ip }}"
+          - "[ec2_instance_facts] ns_public_ip: {{ ns_public_ip }}"
+          - "[ec2_instance_facts] ns_private_dns: {{ ns_private_dns }}"
+          - "[ec2_instance_facts] ns_public_dns: {{ ns_public_dns }}"
+          - "########################################################"
+
+
 - name: use the lineinfile module to setup mec and mqtt config files 
   hosts: mec 
   gather_facts: false
   vars:
-     redis_db_host: mec-redis001.dropap.com
+     redis_db_ip: "{{ hostvars.localhost.redis_private_ip }}" 
      redis_db_port: 6379
      redis_db_auth: 12345678
      mec_mqtt_account: su_MEC-A
      mec_mqtt_password: 12345678
-     mqtt_private_ip: ns001.dropap.com
-     mqtt_public_ip: ns001.dropap.com
+     mqtt_private_ip: "{{ hostvars.localhost.ns_private_ip }}"
+     mqtt_public_ip: "{{ hostvars.localhost.ns_public_ip }}"
+     user: hank_chen
 
   tasks:
+    - debug:
+        msg:
+          - "########################################################"
+          - "[var] redis_db_ip: {{ redis_db_ip }}"
+          - "[var] mqtt_private_ip: {{ mqtt_private_ip }}"
+          - "[var] mqtt_public_ip: {{ mqtt_public_ip }}"
+          - "########################################################"
     - name: mec config - redis.host
       lineinfile:
-        path: /home/hank_chen/mec_release_20160201/mec/config/mec.conf
+        path: "/home/{{ user }}/mec_release_20160201/mec/config/mec.conf"
         regexp: 'redis\.host\s*='
-        line: "redis.host = {{ redis_db_host }}"
+        line: "redis.host = {{ redis_db_ip }}"
         state: present
         backup: yes
 
