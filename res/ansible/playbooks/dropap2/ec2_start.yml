@@ -29,7 +29,7 @@
         port: 22
         delay: 30
       tags:
-        - wait
+        - wait_ssh
 
     - name: display ec2 status
       debug:
