@@ -1,5 +1,5 @@
 localhost ansible_connection=local ansible_python_interpreter=python
-redis ansible_host=ec2-54-193-102-178.us-west-1.compute.amazonaws.com ansible_user=ec2-user ansible_private_key_file=~/.ssh/dropap_gear_zone_sig.pem
-ns ansible_host=ec2-52-53-149-248.us-west-1.compute.amazonaws.com ansible_user=ec2-user ansible_private_key_file=~/.ssh/dropap_gear_zone_sig.pem
-mec ansible_host=ec2-54-183-244-66.us-west-1.compute.amazonaws.com ansible_user=ec2-user ansible_private_key_file=~/.ssh/dropap_gear_zone_sig.pem
-serm1 ansible_host=ec2-54-153-3-202.us-west-1.compute.amazonaws.com ansible_user=ec2-user ansible_private_key_file=~/.ssh/dropap_gear_zone_sig.pem
+redis	 ansible_host=ec2-54-193-102-178.us-west-1.compute.amazonaws.com ansible_user=ec2-user ansible_private_key_file=~/.ssh/dropap_gear_zone_sig.pem
+ns	 ansible_host=ec2-52-53-149-248.us-west-1.compute.amazonaws.com	 ansible_user=ec2-user ansible_private_key_file=~/.ssh/dropap_gear_zone_sig.pem
+mec	 ansible_host=ec2-54-183-244-66.us-west-1.compute.amazonaws.com	 ansible_user=ec2-user ansible_private_key_file=~/.ssh/dropap_gear_zone_sig.pem	ansible_become=true
+serm1	 ansible_host=ec2-54-153-3-202.us-west-1.compute.amazonaws.com	 ansible_user=ec2-user ansible_private_key_file=~/.ssh/dropap_gear_zone_sig.pem	ansible_become=true
