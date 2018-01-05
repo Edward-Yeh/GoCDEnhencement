@@ -80,3 +80,5 @@
         line: "mosquitto2 = {{ mqtt_private_ip }}:80/{{ mqtt_public_ip }}:80/1"
         state: present
         backup: yes
+    - name: restart service
+      shell: "/bin/bash /home/{{ user }}/{{ config_path }}/mec/monitor_mec.sh"

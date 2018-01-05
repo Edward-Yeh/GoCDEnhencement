@@ -32,3 +32,6 @@
         group: root
         mode: 0644
         backup: yes
+    - name: restart mosquitto service
+      shell: /usr/local/sbin/mosquitto -c /etc/mosquitto/mosquitto.conf -d
+      become: true
