@@ -1,0 +1,15 @@
+    - name: get ns instance status
+      ec2_instance_facts:
+        region: "{{ aws_region }}"
+        instance_ids:
+          - "{{ ns_instance_id }}"
+      register: ns
+    - set_fact:
+        ns_private_ip: "{{ ns.instances[0].private_ip_address }}"
+        ns_public_ip: "{{ ns.instances[0].public_ip_address }}"
+    - debug:
+        msg:
+          - "########################################################"
+          - "[ec2_instance_facts] ns_private_ip: {{ ns_private_ip }}"
+          - "[ec2_instance_facts] ns_public_ip: {{ ns_public_ip }}"
+          - "########################################################"

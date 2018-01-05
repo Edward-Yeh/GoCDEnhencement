@@ -1,0 +1,13 @@
+    - name: get redis instance status
+      ec2_instance_facts:
+        region: "{{ aws_region }}"
+        instance_ids:
+          - "{{ redis_instance_id }}"
+      register: redis
+    - set_fact:
+        redis_private_ip: "{{ redis.instances[0].private_ip_address }}"
+    - debug:
+        msg:
+          - "########################################################"
+          - "[ec2_instance_facts] redis_private_ip: {{ redis_private_ip }}"
+          - "########################################################"

@@ -1,0 +1,15 @@
+    - name: get mec instance status
+      ec2_instance_facts:
+        region: "{{ aws_region }}"
+        instance_ids:
+          - "{{ mec_instance_id }}"
+      register: mec
+    - set_fact:
+        mec_private_ip: "{{ mec.instances[0].private_ip_address }}"
+        mec_public_ip: "{{ mec.instances[0].public_ip_address }}"
+    - debug:
+        msg:
+          - "########################################################"
+          - "[ec2_instance_facts] mec_private_ip: {{ mec_private_ip }}"
+          - "[ec2_instance_facts] mec_public_ip: {{ mec_public_ip }}"
+          - "########################################################"

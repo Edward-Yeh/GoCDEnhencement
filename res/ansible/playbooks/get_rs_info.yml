@@ -1,0 +1,15 @@
+    - name: get relay server instance status
+      ec2_instance_facts:
+        region: "{{ aws_region }}"
+        instance_ids:
+          - "{{ rs_instance_id }}"
+      register: rs
+    - set_fact:
+        rs_private_ip: "{{ rs.instances[0].private_ip_address }}"
+        rs_public_ip: "{{ rs.instances[0].public_ip_address }}"
+    - debug:
+        msg:
+          - "########################################################"
+          - "[ec2_instance_facts] rs_private_ip: {{ rs_private_ip }}"
+          - "[ec2_instance_facts] rs_public_ip: {{ rs_public_ip }}"
+          - "########################################################"
