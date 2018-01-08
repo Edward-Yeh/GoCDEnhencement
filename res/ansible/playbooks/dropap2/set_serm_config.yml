@@ -52,3 +52,6 @@
         group: "{{ user }}"
         mode: 0755
         backup: yes
+    - name: restart service through pm2
+      shell: /root/.nvm/v0.10.32/bin/pm2 restart all
+      become: true
